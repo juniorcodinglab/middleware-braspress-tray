@@ -1,5 +1,7 @@
 <?php
 
+use Slim\Http\StatusCode;
+
 function customCsv($text, $logName = "log"){
     $file = fopen($logName, "a+");
     fwrite($file, date("d/m/Y H:i") .";". $text . "\n");
@@ -117,6 +119,22 @@ function searchCotation(string $apiUrl, string $apiUser, string $apiPass, array 
     return $resposta;
 }
 
+function arrayToXml($array, $xml = null) {
+    if ($xml === null) {
+        $xml = new SimpleXMLElement('<root/>');
+    }
+
+    foreach ($array as $key => $value) {
+        if (is_array($value)) {
+            $child = $xml->addChild($key);
+            arrayToXml($value, $child);
+        } else {
+            $xml->addChild($key, htmlspecialchars($value));
+        }
+    }
+
+    return $xml->asXML();
+}
 
 /**
  * Just for fix jenssegers/laravel-mongodb package issue to using outside of Laravel or Lumen
